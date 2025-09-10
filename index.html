@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Macro Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .input-group input[type="number"]::-webkit-outer-spin-button,
+        .input-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .input-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen w-full">
+
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl mx-auto p-4 md:p-8 lg:p-12 my-8 flex flex-col gap-8">
+        <!-- Header Section -->
+        <header class="text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight mb-2">AI-Powered Macro Calculator</h1>
+            <p class="text-lg text-gray-500">Find and track macros for any food using Groq Llama 3.1.</p>
+            
+            <!-- API Key Settings -->
+            <div class="mt-4 flex justify-center space-x-2">
+                <button id="settingsBtn" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-gray-700 transition-colors duration-200">
+                    ⚙️ API Settings
+                </button>
+            </div>
+        </header>
+
+        <!-- Input and Add Section -->
+    <div class="bg-gray-50 p-6 rounded-2xl shadow-inner space-y-6 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-700">Add a Food Item</h2>
+            <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
+                <div class="input-group">
+                    <label for="foodName" class="block text-sm font-medium text-gray-600 mb-1">Food Name</label>
+                    <input type="text" id="foodName" placeholder="e.g., Avocado, Quinoa, Steak" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                </div>
+                <div class="input-group">
+                    <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (g)</label>
+                    <input type="number" id="weight" placeholder="100" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                </div>
+            </div>
+            <button id="addFoodBtn" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                <span id="buttonText">Add Food</span>
+                <div id="buttonLoader" class="loader hidden"></div>
+            </button>
+        </div>
+
+        <!-- Totals and Food List Section -->
+    <div class="space-y-6 max-w-2xl mx-auto">
+            <!-- Total Macros Display -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="bg-blue-100 p-4 rounded-xl shadow-md">
+                    <p class="text-sm text-gray-500">Total Calories</p>
+                    <p id="totalCalories" class="text-2xl font-bold text-blue-800">0</p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-xl shadow-md">
+                    <p class="text-sm text-gray-500">Total Protein</p>
+                    <p id="totalProtein" class="text-2xl font-bold text-green-800">0 g</p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-xl shadow-md">
+                    <p class="text-sm text-gray-500">Total Fat</p>
+                    <p id="totalFat" class="text-2xl font-bold text-red-800">0 g</p>
+                </div>
+                <div class="bg-purple-100 p-4 rounded-xl shadow-md">
+                    <p class="text-sm text-gray-500">Total Vitamins</p>
+                    <p id="totalVitamins" class="text-2xl font-bold text-purple-800">0 mg</p>
+                </div>
+            </div>
+
+            <!-- Food Items List -->
+            <div class="bg-gray-50 p-6 rounded-2xl shadow-inner">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-2xl font-bold text-gray-700">Added Food Items</h2>
+                                    <button id="removeAllFoodsBtn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-4">Remove All</button>
+                                </div>
+                <ul id="foodList" class="space-y-4 max-h-64 overflow-y-auto pr-2">
+                    <!-- Food items will be added here dynamically -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Custom Modal for Alerts -->
+        <div id="alertModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 text-center space-y-4 max-w-sm w-full">
+                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800"></h3>
+                <p id="modalMessage" class="text-gray-600"></p>
+                <button id="closeModalBtn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors duration-300">
+                    OK
+                </button>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 space-y-4 max-w-md w-full">
+                <h3 class="text-2xl font-bold text-gray-800 text-center">API Settings</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="apiInput" class="block text-sm font-medium text-gray-600 mb-1">Groq API Key</label>
+                        <input type="password" id="apiInput" placeholder="Enter your Groq API key" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                        <p class="text-xs text-gray-500 mt-1">Your API key is stored locally and never shared.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="saveapiBtn" class="flex-1 bg-green-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-green-700 transition-colors duration-200">
+                            Save
+                        </button>
+                        <button id="clearapiBtn" class="flex-1 bg-red-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-700 transition-colors duration-200">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <button id="closeSettingsBtn" class="w-full bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-gray-700 transition-colors duration-200">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to all necessary DOM elements
+        const addFoodBtn = document.getElementById('addFoodBtn');
+        const foodList = document.getElementById('foodList');
+        const totalCaloriesEl = document.getElementById('totalCalories');
+        const totalProteinEl = document.getElementById('totalProtein');
+        const totalFatEl = document.getElementById('totalFat');
+        const totalVitaminsEl = document.getElementById('totalVitamins');
+        const foodNameInput = document.getElementById('foodName');
+        const weightInput = document.getElementById('weight');
+        const alertModal = document.getElementById('alertModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const buttonText = document.getElementById('buttonText');
+        const buttonLoader = document.getElementById('buttonLoader');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const apiInput = document.getElementById('apiInput');
+        const saveapiBtn = document.getElementById('saveapiBtn');
+        const clearapiBtn = document.getElementById('clearapiBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+
+        // Initialize total macro values
+    let totalCalories = 0;
+    let totalProtein = 0;
+    let totalFat = 0;
+    let totalVitamins = 0;
+    let foodRecords = [];
+    let savedMeals = [];
+
+        const GROQ = getapi();
+        const apiUrl = "https://api.groq.com/openai/v1/chat/completions";
+
+        function getapi() {
+            let api = localStorage.getItem('GROQ');
+            
+            if (!api) {
+                api = prompt('Please enter your Groq:');
+                if (api) {
+                    localStorage.setItem('GROQ', api.trim());
+                } else {
+                    showModal('A Key Required', 'A key is required to use this application.');
+                    return null;
+                }
+            }
+            return api;
+        }
+
+        // Function to clear stored API key (for security)
+        function clearapi() {
+            localStorage.removeItem('GROQ');
+            location.reload();
+        }
+
+        // Function to show the custom modal
+        const showModal = (title, message) => {
+            modalTitle.textContent = title;
+            if (typeof message === 'string') {
+                modalMessage.innerHTML = message;
+            } else {
+                modalMessage.textContent = '';
+                modalMessage.appendChild(message);
+            }
+            alertModal.classList.remove('hidden');
+        };
+
+        // Function to update the totals display
+        const updateTotals = () => {
+            totalCaloriesEl.textContent = totalCalories.toFixed(2);
+            totalProteinEl.textContent = `${totalProtein.toFixed(2)} g`;
+            totalFatEl.textContent = `${totalFat.toFixed(2)} g`;
+            totalVitaminsEl.textContent = `${totalVitamins.toFixed(2)} mg`;
+        };
+
+
+        // Save foodRecords, totals, and savedMeals to localStorage
+        const saveToLocal = () => {
+            localStorage.setItem('foodRecords', JSON.stringify(foodRecords));
+            localStorage.setItem('totals', JSON.stringify({
+                totalCalories, totalProtein, totalFat, totalVitamins
+            }));
+            localStorage.setItem('savedMeals', JSON.stringify(savedMeals));
+        };
+
+        // Load foodRecords, totals, and savedMeals from localStorage
+        const loadFromLocal = () => {
+            const savedFoods = localStorage.getItem('foodRecords');
+            const savedTotals = localStorage.getItem('totals');
+            const meals = localStorage.getItem('savedMeals');
+            if (savedFoods) foodRecords = JSON.parse(savedFoods);
+            if (savedTotals) {
+                const t = JSON.parse(savedTotals);
+                totalCalories = t.totalCalories || 0;
+                totalProtein = t.totalProtein || 0;
+                totalFat = t.totalFat || 0;
+                totalVitamins = t.totalVitamins || 0;
+            }
+            if (meals) savedMeals = JSON.parse(meals);
+        };
+
+        // Function to handle the add food process
+    // Helper to render a food item (with all nutrients)
+    function renderFoodItem(foodObj, index) {
+        const { foodName, weight, calories, protein, fat, vitamins, fiber, ...otherNutrients } = foodObj;
+        const listItem = document.createElement('li');
+        listItem.className = 'bg-white border-2 border-indigo-200 p-4 rounded-2xl shadow flex flex-col md:flex-row justify-between items-center transition-all duration-300 mb-2';
+        // Remove sodium, potassium, calcium, iron from display, add fiber if present
+        let otherNutrientsHtml = '';
+        // Remove unwanted nutrients from otherNutrients (case-insensitive)
+        const filteredNutrients = Object.entries(otherNutrients).filter(
+            ([key, _]) => !['sodium', 'potassium', 'calcium', 'iron'].includes(key.toLowerCase())
+        );
+        for (const [key, value] of filteredNutrients) {
+            otherNutrientsHtml += `<span class=\"text-gray-700 font-semibold\">${key}: <span class='text-indigo-700'>${value}</span></span> • `;
+        }
+        if (otherNutrientsHtml.endsWith(' • ')) otherNutrientsHtml = otherNutrientsHtml.slice(0, -3);
+        // Add fiber if present
+        let fiberHtml = '';
+        if (fiber !== undefined) {
+            fiberHtml = `<span class=\"text-yellow-700 font-bold\">${fiber?.toFixed(2) ?? 0} g</span> Fiber • `;
+        }
+        listItem.innerHTML = `
+            <div class=\"w-full md:w-auto mb-2 md:mb-0\">
+                <p class=\"font-semibold text-lg text-gray-800 capitalize\">${foodName} (${weight}g)</p>
+                <p class=\"text-sm text-gray-500\">
+                    <span class=\"text-blue-600 font-bold\">${calories?.toFixed(2) ?? 0} kcal</span> •
+                    <span class=\"text-green-600 font-bold\">${protein?.toFixed(2) ?? 0} g</span> Protein •
+                    <span class=\"text-red-600 font-bold\">${fat?.toFixed(2) ?? 0} g</span> Fat •
+                    <span class=\"text-purple-600 font-bold\">${vitamins?.toFixed(2) ?? 0} mg</span> Vitamins •
+                    ${fiberHtml}${otherNutrientsHtml}
+                </p>
+            </div>
+            <button class=\"remove-food-btn bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-0 md:ml-4 mt-4 md:mt-0\">Remove</button>
+        `;
+        // Remove button
+        const removeBtn = listItem.querySelector('.remove-food-btn');
+        removeBtn.addEventListener('click', function() {
+            // Remove from foodRecords
+            const removed = foodRecords.splice(index, 1)[0];
+            totalCalories -= removed.calories || 0;
+            totalProtein -= removed.protein || 0;
+            totalFat -= removed.fat || 0;
+            totalVitamins -= removed.vitamins || 0;
+            updateTotals();
+            saveToLocal();
+            renderFoodList();
+        });
+        return listItem;
+    }
+
+    // Render the food list from foodRecords
+    function renderFoodList() {
+        foodList.innerHTML = '';
+        foodRecords.forEach((food, idx) => {
+            foodList.appendChild(renderFoodItem(food, idx));
+        });
+        // Attach Remove All button event
+        const removeAllBtn = document.getElementById('removeAllFoodsBtn');
+        if (removeAllBtn) {
+            removeAllBtn.onclick = function() {
+                if (foodRecords.length === 0) return;
+                if (confirm('Are you sure you want to remove all added food items?')) {
+                    foodRecords = [];
+                    totalCalories = 0;
+                    totalProtein = 0;
+                    totalFat = 0;
+                    totalVitamins = 0;
+                    saveToLocal();
+                    renderFoodList();
+                    updateTotals();
+                }
+            };
+        }
+    }
+
+    // Render saved meals
+    function renderSavedMeals() {
+        let mealSection = document.getElementById('savedMealsSection');
+        if (!mealSection) {
+            mealSection = document.createElement('div');
+            mealSection.id = 'savedMealsSection';
+            mealSection.className = 'mt-8 max-w-4xl mx-auto';
+            document.body.appendChild(mealSection);
+        }
+        mealSection.innerHTML = '<h2 class="text-2xl font-bold text-gray-700 mb-4">Saved Meals</h2>';
+        if (savedMeals.length === 0) {
+            mealSection.innerHTML += '<p class="text-gray-500">No meals saved yet.</p>';
+            return;
+        }
+        savedMeals.forEach((meal, i) => {
+            const mealBox = document.createElement('div');
+            mealBox.className = 'bg-white border-2 border-green-200 p-4 rounded-2xl shadow mb-8';
+            mealBox.innerHTML = `<div class='flex justify-between items-center mb-2'>
+                <span class='font-bold text-lg text-green-700'>Meal #${i+1}</span>
+                <div class='flex gap-2'>
+                    <button class='add-food-to-meal-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700' data-idx='${i}'>Add Food</button>
+                    <button class='delete-meal-btn bg-red-400 text-white px-3 py-1 rounded hover:bg-red-600' data-idx='${i}'>Delete</button>
+                </div>
+            </div>`;
+            meal.foods.forEach((food, foodIdx) => {
+                mealBox.innerHTML += `<div class='ml-2 mb-1 flex items-center gap-2'>
+                    <span class='font-semibold text-gray-800'>${food.foodName} (${food.weight}g)</span>
+                    <button class='remove-food-from-meal-btn bg-red-200 text-red-700 px-2 py-0.5 rounded text-xs' data-meal='${i}' data-food='${foodIdx}'>Remove</button>
+                </div>`;
+            });
+            mealBox.innerHTML += `<button class='show-macros-btn mt-2 bg-indigo-500 text-white px-4 py-1 rounded hover:bg-indigo-700' data-idx='${i}'>Show Macros</button>`;
+            mealSection.appendChild(mealBox);
+        });
+        // Add event listeners for new buttons
+        mealSection.querySelectorAll('.delete-meal-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const idx = parseInt(this.getAttribute('data-idx'));
+                savedMeals.splice(idx, 1);
+                saveToLocal();
+                renderSavedMeals();
+            });
+        });
+        mealSection.querySelectorAll('.add-food-to-meal-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const idx = parseInt(this.getAttribute('data-idx'));
+                showAddFoodToMealModal(idx);
+            });
+        });
+        mealSection.querySelectorAll('.remove-food-from-meal-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const mealIdx = parseInt(this.getAttribute('data-meal'));
+                const foodIdx = parseInt(this.getAttribute('data-food'));
+                savedMeals[mealIdx].foods.splice(foodIdx, 1);
+                saveToLocal();
+                renderSavedMeals();
+            });
+        });
+        mealSection.querySelectorAll('.show-macros-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const idx = parseInt(this.getAttribute('data-idx'));
+                showMealModal(savedMeals[idx], idx+1);
+            });
+        });
+    // Modal to add food to a meal
+    function showAddFoodToMealModal(mealIdx) {
+        let html = `<div class='space-y-4 text-left'>
+            <label class='block'>Food Name
+                <input id='modalFoodName' class='w-full px-3 py-2 border rounded mt-1' placeholder='e.g. Apple' />
+            </label>
+            <label class='block'>Weight (g)
+                <input id='modalFoodWeight' type='number' class='w-full px-3 py-2 border rounded mt-1' placeholder='100' />
+            </label>
+            <button id='modalAddFoodBtn' class='w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700'>Add Food</button>
+        </div>`;
+        showModal('Add Food to Meal', html);
+        setTimeout(() => {
+            document.getElementById('modalAddFoodBtn').onclick = async function() {
+                const foodName = document.getElementById('modalFoodName').value.trim();
+                const weight = parseFloat(document.getElementById('modalFoodWeight').value);
+                if (!foodName || isNaN(weight) || weight <= 0) {
+                    showModal('Invalid Input', 'Please enter a valid food name and weight.');
+                    return;
+                }
+                // Fetch nutrition info using Groq API
+                const userPrompt = `What are the calories (kcal), protein (g), fat (g), vitamins (mg), and all other nutrients (like carbs, fiber, sugar) for ${weight}g of ${foodName}? Provide the data in a simple JSON object with all available nutrients as keys. Do not include any explanation or markdown.`;
+                const systemPrompt = `Your sole purpose is to provide nutritional information for a food item in a JSON object. The keys must include at least 'foodName', 'calories', 'protein', 'fat', and 'vitamins', and any other nutrients if available (e.g., carbs, fiber, sugar, sodium). The values for all nutrients must be numbers except 'foodName'. Do not include any other text, explanation, or markdown. If you cannot find the data, set all nutritional values to 0.`;
+                const payload = {
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                model: "llama-3.1-8b-instant",
+                    temperature: 1,
+                max_completion_tokens: 1024,
+                    top_p: 1,
+                    stream: false
+                };
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getapi()}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error('API error');
+                    const result = await response.json();
+                    let content = result.choices?.[0]?.message?.content;
+                    if (content) {
+                        if (content.startsWith('```')) {
+                            content = content.replace(/^```[a-zA-Z]*\n?|```$/g, '').trim();
+                        }
+                        const parsedData = JSON.parse(content);
+                        parsedData.weight = weight;
+                        savedMeals[mealIdx].foods.push(parsedData);
+                        saveToLocal();
+                        renderSavedMeals();
+                        alertModal.classList.add('hidden');
+                    } else {
+                        showModal('API Error', 'No content returned from API.');
+                    }
+                } catch (err) {
+                    showModal('API Error', 'Failed to fetch data. Please try again later.');
+                }
+            };
+        }, 100);
+    }
+    // Show modal with all meal details
+    function showMealModal(meal, mealNumber) {
+        // Collect all unique macro keys, excluding sodium, potassium, calcium, iron
+        const macroSet = new Set();
+        meal.foods.forEach(food => {
+            Object.keys(food).forEach(key => {
+                if (!['foodName','weight','sodium','potassium','calcium','iron'].includes(key.toLowerCase())) macroSet.add(key);
+            });
+        });
+        const macros = Array.from(macroSet);
+        // Table header: food names
+                        let html = `
+                        <div class='fixed inset-0 flex items-center justify-center z-50'>
+                            <div style="width:95vw;max-width:1100px;max-height:85vh;overflow:auto;background:rgba(245,247,255,0.98);box-shadow:0 4px 32px #0003;border-radius:2rem;padding:2.5rem 1.5rem;display:flex;flex-direction:column;align-items:center;">
+                                <div class='w-full overflow-x-auto'>
+                                    <table class='w-full border border-gray-200 rounded-2xl text-base bg-white shadow-lg'>
+                                        <thead>
+                                            <tr>
+                                                <th class='p-4 border-b-2 border-gray-300 bg-indigo-100 text-lg font-bold text-left sticky top-0 z-10 rounded-tl-2xl'>Macro</th>`;
+                        meal.foods.forEach((food, idx) => {
+                                html += `<th class='p-4 border-b-2 border-gray-300 bg-indigo-100 text-lg font-bold text-center sticky top-0 z-10'>${food.foodName} <br><span class='text-xs text-gray-500'>(${food.weight}g)</span></th>`;
+                        });
+                        html += `</tr></thead><tbody>`;
+                        macros.forEach((macro, rowIdx) => {
+                                html += `<tr class='${rowIdx % 2 === 0 ? 'bg-white' : 'bg-indigo-50'}'>
+                                        <td class='p-3 border-b border-gray-100 font-semibold capitalize'>${macro}</td>`;
+                                meal.foods.forEach(food => {
+                                        let val = food[macro];
+                                        html += `<td class='p-3 border-b border-gray-100 text-center text-indigo-700'>${val !== undefined ? val : '-'}</td>`;
+                                });
+                                html += `</tr>`;
+                        });
+                        html += `</tbody></table>
+                                </div>
+                                <div class='flex justify-center mt-6 w-full'>
+                                    <button onclick='document.getElementById("closeModalBtn").click()' class='bg-indigo-600 text-white font-bold py-3 px-10 rounded-2xl shadow-lg hover:bg-indigo-700 text-lg transition-all duration-200'>OK</button>
+                                </div>
+                            </div>
+                        </div>`;
+                        showModal(`Meal #${mealNumber} Macros Table`, html);
+    }
+        // Add delete listeners
+        mealSection.querySelectorAll('.delete-meal-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-idx'));
+                savedMeals.splice(idx, 1);
+                saveToLocal();
+                renderSavedMeals();
+            });
+        });
+    }
+
+    const addFoodItem = async () => {
+            const foodName = foodNameInput.value.trim();
+            const weight = parseFloat(weightInput.value);
+
+            // Validation
+            if (!foodName) {
+                showModal('Missing Food Name', 'Please enter a food name before adding.');
+                return;
+            }
+            if (isNaN(weight) || weight <= 0) {
+                showModal('Invalid Weight', 'Please enter a positive weight in grams.');
+                return;
+            }
+
+            // Check if API key is available
+            const api = getapi();
+            if (!api) {
+                showModal('API Key Required', 'Please set your Groq API key in the settings before adding food items.');
+                return;
+            }
+
+            // Show loading state
+            addFoodBtn.disabled = true;
+            buttonText.textContent = 'Fetching...';
+            buttonLoader.classList.remove('hidden');
+
+            // Construct the prompt for Groq Llama 3.1
+            const userPrompt = `What are the calories (kcal), protein (g), fat (g), vitamins (mg), and all other nutrients (like carbs, fiber, sugar, sodium, potassium, calcium, iron, etc.) for ${weight}g of ${foodName}? Provide the data in a simple JSON object with all available nutrients as keys. Do not include any explanation or markdown.`;
+            const systemPrompt = `Your sole purpose is to provide nutritional information for a food item in a JSON object. The keys must include at least 'foodName', 'calories', 'protein', 'fat', and 'vitamins', and any other nutrients if available (e.g., carbs, fiber, sugar, sodium, potassium, calcium, iron, etc.). The values for all nutrients must be numbers except 'foodName'. Do not include any other text, explanation, or markdown. If you cannot find the data, set all nutritional values to 0.`;
+
+            // Construct the API request payload for Groq
+            const payload = {
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: userPrompt }
+                ],
+            model: "llama-3.1-8b-instant",
+                temperature: 1,
+            max_completion_tokens: 1024,
+                top_p: 1,
+                stream: false
+            };
+            
+            let retries = 0;
+            const maxRetries = 3;
+            let success = false;
+
+            while (retries < maxRetries && !success) {
+                try {
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${api}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const content = result.choices?.[0]?.message?.content;
+                    if (content) {
+                        // Remove code block markers if present
+                        let jsonText = content.trim();
+                        if (jsonText.startsWith('```')) {
+                            jsonText = jsonText.replace(/^```[a-zA-Z]*\n?|```$/g, '').trim();
+                        }
+                        const parsedData = JSON.parse(jsonText);
+
+                        // Check if data was found
+                        if ((parsedData.calories ?? 0) === 0 && (parsedData.protein ?? 0) === 0 && (parsedData.fat ?? 0) === 0 && (parsedData.vitamins ?? 0) === 0) {
+                             showModal('Data Not Found', `Sorry, we couldn't find nutritional information for "${foodName}". Please try a different food.`);
+                        } else {
+                            // Add weight to the record
+                            parsedData.weight = weight;
+                            // Update global totals
+                            totalCalories += parsedData.calories || 0;
+                            totalProtein += parsedData.protein || 0;
+                            totalFat += parsedData.fat || 0;
+                            totalVitamins += parsedData.vitamins || 0;
+
+                            // Add to foodRecords
+                            foodRecords.unshift(parsedData);
+                            saveToLocal();
+                            renderFoodList();
+
+                            // Clear the input fields
+                            foodNameInput.value = '';
+                            weightInput.value = '';
+                            
+                            updateTotals();
+                        }
+                        success = true;
+                    } else {
+                        throw new Error('No content returned from API.');
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    retries++;
+                    if (retries < maxRetries) {
+                        await new Promise(res => setTimeout(res, Math.pow(2, retries) * 1000));
+                    } else {
+                        showModal('API Error', 'Failed to fetch data. Please try again later.');
+                    }
+                }
+            }
+            
+            // Hide loading state
+            addFoodBtn.disabled = false;
+            buttonText.textContent = 'Add Food';
+            buttonLoader.classList.add('hidden');
+        };
+
+        // Attach event listeners
+        addFoodBtn.addEventListener('click', addFoodItem);
+        closeModalBtn.addEventListener('click', () => {
+            alertModal.classList.add('hidden');
+        });
+
+        // Settings modal event listeners
+        settingsBtn.addEventListener('click', () => {
+            const currentKey = localStorage.getItem('GROQ');
+            if (currentKey) {
+                apiInput.value = '••••••••••••••••'; // Show masked key
+            }
+            settingsModal.classList.remove('hidden');
+        });
+
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+            apiInput.value = '';
+        });
+
+        saveapiBtn.addEventListener('click', () => {
+            const newKey = apiInput.value.trim();
+            if (newKey && newKey !== '••••••••••••••••') {
+                localStorage.setItem('GROQ', newKey);
+                showModal('API Key Saved', 'Your API key has been saved successfully.');
+                settingsModal.classList.add('hidden');
+                apiInput.value = '';
+            } else {
+                showModal('Invalid API Key', 'Please enter a valid API key.');
+            }
+        });
+
+        clearapiBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear your saved API key?')) {
+                localStorage.removeItem('GROQ');
+                settingsModal.classList.add('hidden');
+                apiInput.value = '';
+                showModal('API Key Cleared', 'Your API key has been removed.');
+            }
+        });
+
+        // Add Save Meal button
+        let saveMealBtn = document.getElementById('saveMealBtn');
+        if (!saveMealBtn) {
+            saveMealBtn = document.createElement('button');
+            saveMealBtn.id = 'saveMealBtn';
+            saveMealBtn.className = 'w-full bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 mt-4';
+            saveMealBtn.textContent = 'Save Meal';
+            document.querySelector('.space-y-6').appendChild(saveMealBtn);
+        }
+        saveMealBtn.addEventListener('click', () => {
+            if (foodRecords.length === 0) {
+                showModal('Nothing to Save', 'Add at least one food item before saving a meal.');
+                return;
+            }
+            // Save a copy of the current foods as a meal
+            savedMeals.unshift({
+                foods: JSON.parse(JSON.stringify(foodRecords)),
+                timestamp: Date.now()
+            });
+            saveToLocal();
+            renderSavedMeals();
+            showModal('Meal Saved', 'Your meal has been saved!');
+        });
+
+        // On load, restore from localStorage
+        loadFromLocal();
+        renderFoodList();
+        renderSavedMeals();
+        updateTotals();
+    </script>
+</body>
+</html>
