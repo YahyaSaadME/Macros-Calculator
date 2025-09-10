@@ -2,9 +2,10 @@ const CACHE_NAME = 'macro-calculator-v1';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/saved-meals.html',
   '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'
 ];
