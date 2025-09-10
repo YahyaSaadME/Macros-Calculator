@@ -7,7 +7,7 @@
     
     <!-- PWA Meta Tags -->
     <meta name="description" content="Find and track macros for any food using AI-powered calculations">
-    <meta name="theme-color" content="#3B82F6">
+    <meta name="theme-color" content="#d4a574">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Macro Calc">
@@ -27,14 +27,36 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for beautiful icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css for smooth animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fdfbf7 0%, #f7f3e9 50%, #f1e9d5 100%);
+            min-height: 100vh;
         }
+        
+        .cream-gradient {
+            background: linear-gradient(135deg, #fffcf7 0%, #fef7e7 50%, #f9f0e3 100%);
+        }
+        
+        .warm-shadow {
+            box-shadow: 0 10px 40px rgba(184, 134, 87, 0.15), 0 4px 20px rgba(184, 134, 87, 0.1);
+        }
+        
+        .dancing-font {
+            font-family: 'Dancing Script', cursive;
+        }
+        
         .input-group input[type="number"]::-webkit-outer-spin-button,
         .input-group input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -44,112 +66,225 @@
             -moz-appearance: textfield;
             appearance: textfield;
         }
+        
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
+            border: 4px solid #f7f3e9;
+            border-top: 4px solid #d4a574;
             border-radius: 50%;
             width: 24px;
             height: 24px;
             animation: spin 1s linear infinite;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes pulse-warm {
+            0%, 100% { 
+                background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+                transform: scale(1);
+            }
+            50% { 
+                background: linear-gradient(135deg, #e1b584 0%, #ce9f6e 100%);
+                transform: scale(1.02);
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 165, 116, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(212, 165, 116, 0.6); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .pulse-warm {
+            animation: pulse-warm 2s ease-in-out infinite;
+        }
+        
+        .glow-effect {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(184, 134, 87, 0.25);
+        }
+        
+        .cream-button {
+            background: linear-gradient(135deg, #d4a574 0%, #c19660 100%);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cream-button:hover {
+            background: linear-gradient(135deg, #e1b584 0%, #ce9f6e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(184, 134, 87, 0.3);
+        }
+        
+        .cream-button:active {
+            transform: translateY(0);
+        }
+        
+        .icon-bounce {
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .cream-card {
+            background: linear-gradient(135deg, #fffcf7 0%, #fef9f3 100%);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+        
+        .warm-input {
+            background: rgba(255, 252, 247, 0.8);
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .warm-input:focus {
+            border-color: #d4a574;
+            background: #fffcf7;
+            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen w-full">
+<body class="min-h-screen w-full">
 
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl mx-auto p-4 md:p-8 lg:p-12 my-8 flex flex-col gap-8">
+    <div class="cream-gradient rounded-3xl warm-shadow w-full max-w-6xl mx-auto p-4 md:p-8 lg:p-12 my-8 flex flex-col gap-8 fade-in-up">
         <!-- Header Section -->
-        <header class="text-center">
+        <header class="text-center animate__animated animate__fadeInDown">
             <!-- Food Logo -->
-            <div class="flex justify-center mb-4">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Apple -->
-                        <path d="M24 8C21 8 19 10 19 13C19 16 21 18 24 18C27 18 29 16 29 13C29 10 27 8 24 8Z" fill="#FF6B6B"/>
-                        <!-- Apple leaf -->
-                        <path d="M25 6C26 5 28 4.5 29 5.5C28.5 6.5 27 7 25 6Z" fill="#4ECDC4"/>
-                        <!-- Plate -->
-                        <circle cx="24" cy="30" r="12" fill="#FFFFFF" stroke="#F3F4F6" stroke-width="1"/>
-                        <!-- Fork -->
-                        <path d="M15 25L15 35M14 25L14 28M16 25L16 28" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
-                        <!-- Knife -->
-                        <path d="M33 25L33 35M33 25L34 26" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
-                        <!-- Food items -->
-                        <circle cx="22" cy="29" r="2" fill="#10B981"/>
-                        <circle cx="26" cy="29" r="1.5" fill="#F59E0B"/>
-                        <rect x="21" y="32" width="6" height="2" rx="1" fill="#EF4444"/>
-                    </svg>
+            <div class="flex justify-center mb-6">
+                <div class="w-24 h-24 cream-button rounded-full flex items-center justify-center warm-shadow float-animation glow-effect">
+                    <i class="fas fa-utensils text-4xl text-white icon-bounce"></i>
                 </div>
             </div>
             
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight mb-2">AI-Powered Macro Calculator</h1>
-            <p class="text-lg text-gray-500">Find and track macros for any food using Groq Llama 3.1.</p>
+            <h1 class="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-700 via-yellow-600 to-amber-800 tracking-tight mb-4 dancing-font">
+                AI-Powered Macro Calculator
+            </h1>
+            <p class="text-xl text-amber-700 font-medium mb-6">Find and track macros for any food using Groq Llama 3.1</p>
             
             <!-- PWA Install Button -->
             <div id="installPrompt" class="mt-4 hidden">
-                <button id="installBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-green-700 transition-colors duration-200 mr-2">
-                    📱 Install App
+                <button id="installBtn" class="cream-button font-bold py-3 px-6 rounded-2xl warm-shadow hover-lift transition-all duration-300 mr-2">
+                    <i class="fas fa-mobile-alt mr-2 icon-bounce"></i>Install App
                 </button>
             </div>
             
             <!-- API Key Settings -->
-            <div class="mt-4 flex justify-center space-x-2">
-                <button id="settingsBtn" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-gray-700 transition-colors duration-200">
-                    ⚙️ API Settings
+            <div class="mt-4 flex justify-center space-x-4">
+                <button id="settingsBtn" class="bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold py-3 px-6 rounded-2xl warm-shadow hover-lift transition-all duration-300">
+                    <i class="fas fa-cog mr-2 animate__animated animate__rotateIn"></i>API Settings
                 </button>
             </div>
         </header>
 
         <!-- Input and Add Section -->
-    <div class="bg-gray-50 p-6 rounded-2xl shadow-inner space-y-6 max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold text-gray-700">Add a Food Item</h2>
-            <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
+        <div class="cream-card p-8 rounded-3xl warm-shadow space-y-6 max-w-2xl mx-auto hover-lift animate__animated animate__fadeInLeft">
+            <h2 class="text-3xl font-bold text-amber-800 dancing-font text-center">
+                <i class="fas fa-plus-circle mr-3 text-amber-600"></i>Add a Food Item
+            </h2>
+            <div class="space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
                 <div class="input-group">
-                    <label for="foodName" class="block text-sm font-medium text-gray-600 mb-1">Food Name</label>
-                    <input type="text" id="foodName" placeholder="e.g., Avocado, Quinoa, Steak" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                    <label for="foodName" class="block text-sm font-semibold text-amber-700 mb-2">
+                        <i class="fas fa-apple-alt mr-2"></i>Food Name
+                    </label>
+                    <input type="text" id="foodName" placeholder="e.g., Avocado, Quinoa, Steak" class="w-full px-4 py-3 warm-input rounded-2xl focus:outline-none transition-all duration-300">
                 </div>
                 <div class="input-group">
-                    <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (g)</label>
-                    <input type="number" id="weight" placeholder="100" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                    <label for="weight" class="block text-sm font-semibold text-amber-700 mb-2">
+                        <i class="fas fa-weight mr-2"></i>Weight (g)
+                    </label>
+                    <input type="number" id="weight" placeholder="100" class="w-full px-4 py-3 warm-input rounded-2xl focus:outline-none transition-all duration-300">
                 </div>
             </div>
-            <button id="addFoodBtn" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
-                <span id="buttonText">Add Food</span>
+            <button id="addFoodBtn" class="w-full cream-button font-bold py-4 px-6 rounded-2xl warm-shadow hover-lift transition-all duration-300 transform flex items-center justify-center space-x-2 text-lg">
+                <span id="buttonText"><i class="fas fa-plus mr-2"></i>Add Food</span>
                 <div id="buttonLoader" class="loader hidden"></div>
             </button>
         </div>
 
         <!-- Totals and Food List Section -->
-    <div class="space-y-6 max-w-2xl mx-auto">
+        <div class="space-y-8 max-w-2xl mx-auto animate__animated animate__fadeInRight">
             <!-- Total Macros Display -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div class="bg-blue-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Calories</p>
-                    <p id="totalCalories" class="text-2xl font-bold text-blue-800">0</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="cream-card p-6 rounded-3xl warm-shadow hover-lift transition-all duration-300">
+                    <div class="text-4xl mb-3">
+                        <i class="fas fa-fire text-orange-500 pulse-warm"></i>
+                    </div>
+                    <p class="text-sm text-amber-600 font-semibold">Total Calories</p>
+                    <p id="totalCalories" class="text-3xl font-bold text-orange-600">0</p>
                 </div>
-                <div class="bg-green-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Protein</p>
-                    <p id="totalProtein" class="text-2xl font-bold text-green-800">0 g</p>
+                <div class="cream-card p-6 rounded-3xl warm-shadow hover-lift transition-all duration-300">
+                    <div class="text-4xl mb-3">
+                        <i class="fas fa-dumbbell text-green-500 pulse-warm"></i>
+                    </div>
+                    <p class="text-sm text-amber-600 font-semibold">Total Protein</p>
+                    <p id="totalProtein" class="text-3xl font-bold text-green-600">0 g</p>
                 </div>
-                <div class="bg-red-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Fat</p>
-                    <p id="totalFat" class="text-2xl font-bold text-red-800">0 g</p>
+                <div class="cream-card p-6 rounded-3xl warm-shadow hover-lift transition-all duration-300">
+                    <div class="text-4xl mb-3">
+                        <i class="fas fa-oil-can text-red-500 pulse-warm"></i>
+                    </div>
+                    <p class="text-sm text-amber-600 font-semibold">Total Fat</p>
+                    <p id="totalFat" class="text-3xl font-bold text-red-600">0 g</p>
                 </div>
-                <div class="bg-purple-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Vitamins</p>
-                    <p id="totalVitamins" class="text-2xl font-bold text-purple-800">0 mg</p>
+                <div class="cream-card p-6 rounded-3xl warm-shadow hover-lift transition-all duration-300">
+                    <div class="text-4xl mb-3">
+                        <i class="fas fa-pills text-purple-500 pulse-warm"></i>
+                    </div>
+                    <p class="text-sm text-amber-600 font-semibold">Total Vitamins</p>
+                    <p id="totalVitamins" class="text-3xl font-bold text-purple-600">0 mg</p>
                 </div>
             </div>
 
             <!-- Food Items List -->
-            <div class="bg-gray-50 p-6 rounded-2xl shadow-inner">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-2xl font-bold text-gray-700">Added Food Items</h2>
-                                    <button id="removeAllFoodsBtn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-4">Remove All</button>
-                                </div>
+            <div class="cream-card p-8 rounded-3xl warm-shadow hover-lift">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-bold text-amber-800 dancing-font">
+                        <i class="fas fa-list-alt mr-3 text-amber-600"></i>Added Food Items
+                    </h2>
+                    <button id="removeAllFoodsBtn" class="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 px-6 rounded-2xl warm-shadow hover-lift transition-all duration-300">
+                        <i class="fas fa-trash-alt mr-2"></i>Remove All
+                    </button>
+                </div>
                 <ul id="foodList" class="space-y-4 max-h-64 overflow-y-auto pr-2">
                     <!-- Food items will be added here dynamically -->
                 </ul>
@@ -157,37 +292,49 @@
         </div>
 
         <!-- Custom Modal for Alerts -->
-        <div id="alertModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 text-center space-y-4 max-w-sm w-full">
-                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800"></h3>
-                <p id="modalMessage" class="text-gray-600"></p>
-                <button id="closeModalBtn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors duration-300">
-                    OK
+        <div id="alertModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden animate__animated animate__fadeIn">
+            <div class="cream-card rounded-3xl warm-shadow p-8 md:p-10 text-center space-y-6 max-w-sm w-full animate__animated animate__zoomIn">
+                <div class="text-5xl mb-4">
+                    <i class="fas fa-info-circle text-amber-600 glow-effect"></i>
+                </div>
+                <h3 id="modalTitle" class="text-2xl font-bold text-amber-800 dancing-font"></h3>
+                <p id="modalMessage" class="text-amber-700"></p>
+                <button id="closeModalBtn" class="cream-button font-bold py-3 px-8 rounded-2xl warm-shadow hover-lift transition-all duration-300">
+                    <i class="fas fa-check mr-2"></i>OK
                 </button>
             </div>
         </div>
 
         <!-- Settings Modal -->
-        <div id="settingsModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 space-y-4 max-w-md w-full">
-                <h3 class="text-2xl font-bold text-gray-800 text-center">API Settings</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label for="apiInput" class="block text-sm font-medium text-gray-600 mb-1">Groq API Key</label>
-                        <input type="password" id="apiInput" placeholder="Enter your Groq API key" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
-                        <p class="text-xs text-gray-500 mt-1">Your API key is stored locally and never shared.</p>
+        <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden animate__animated animate__fadeIn">
+            <div class="cream-card rounded-3xl warm-shadow p-8 md:p-10 space-y-6 max-w-md w-full animate__animated animate__zoomIn">
+                <div class="text-center">
+                    <div class="text-5xl mb-4">
+                        <i class="fas fa-cogs text-amber-600 glow-effect"></i>
                     </div>
-                    <div class="flex space-x-2">
-                        <button id="saveapiBtn" class="flex-1 bg-green-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-green-700 transition-colors duration-200">
-                            Save
+                    <h3 class="text-3xl font-bold text-amber-800 dancing-font">API Settings</h3>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label for="apiInput" class="block text-sm font-semibold text-amber-700 mb-2">
+                            <i class="fas fa-key mr-2"></i>Groq API Key
+                        </label>
+                        <input type="password" id="apiInput" placeholder="Enter your Groq API key" class="w-full px-4 py-3 warm-input rounded-2xl focus:outline-none transition-all duration-300">
+                        <p class="text-xs text-amber-600 mt-2">
+                            <i class="fas fa-shield-alt mr-1"></i>Your API key is stored locally and never shared.
+                        </p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="saveapiBtn" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-4 rounded-2xl warm-shadow hover-lift transition-all duration-300">
+                            <i class="fas fa-save mr-2"></i>Save
                         </button>
-                        <button id="clearapiBtn" class="flex-1 bg-red-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-700 transition-colors duration-200">
-                            Clear
+                        <button id="clearapiBtn" class="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 px-4 rounded-2xl warm-shadow hover-lift transition-all duration-300">
+                            <i class="fas fa-eraser mr-2"></i>Clear
                         </button>
                     </div>
                 </div>
-                <button id="closeSettingsBtn" class="w-full bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-gray-700 transition-colors duration-200">
-                    Close
+                <button id="closeSettingsBtn" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold py-3 px-4 rounded-2xl warm-shadow hover-lift transition-all duration-300">
+                    <i class="fas fa-times mr-2"></i>Close
                 </button>
             </div>
         </div>
@@ -340,7 +487,7 @@
     function renderFoodItem(foodObj, index) {
         const { foodName, weight, calories, protein, fat, vitamins, fiber, ...otherNutrients } = foodObj;
         const listItem = document.createElement('li');
-        listItem.className = 'bg-white border-2 border-indigo-200 p-4 rounded-2xl shadow flex flex-col md:flex-row justify-between items-center transition-all duration-300 mb-2';
+        listItem.className = 'cream-card border-2 border-amber-200 p-6 rounded-3xl warm-shadow flex flex-col md:flex-row justify-between items-center transition-all duration-300 mb-4 hover-lift animate__animated animate__fadeInUp';
         // Remove sodium, potassium, calcium, iron from display, add fiber if present
         let otherNutrientsHtml = '';
         // Remove unwanted nutrients from otherNutrients (case-insensitive)
@@ -348,7 +495,7 @@
             ([key, _]) => !['sodium', 'potassium', 'calcium', 'iron'].includes(key.toLowerCase())
         );
         for (const [key, value] of filteredNutrients) {
-            otherNutrientsHtml += `<span class=\"text-gray-700 font-semibold\">${key}: <span class='text-indigo-700'>${value}</span></span> • `;
+            otherNutrientsHtml += `<span class=\"text-amber-700 font-semibold\">${key}: <span class='text-amber-800'>${value}</span></span> • `;
         }
         if (otherNutrientsHtml.endsWith(' • ')) otherNutrientsHtml = otherNutrientsHtml.slice(0, -3);
         // Add fiber if present
@@ -357,30 +504,54 @@
             fiberHtml = `<span class=\"text-yellow-700 font-bold\">${fiber?.toFixed(2) ?? 0} g</span> Fiber • `;
         }
         listItem.innerHTML = `
-            <div class=\"w-full md:w-auto mb-2 md:mb-0\">
-                <p class=\"font-semibold text-lg text-gray-800 capitalize\">${foodName} (${weight}g)</p>
-                <p class=\"text-sm text-gray-500\">
-                    <span class=\"text-blue-600 font-bold\">${calories?.toFixed(2) ?? 0} kcal</span> •
-                    <span class=\"text-green-600 font-bold\">${protein?.toFixed(2) ?? 0} g</span> Protein •
-                    <span class=\"text-red-600 font-bold\">${fat?.toFixed(2) ?? 0} g</span> Fat •
-                    <span class=\"text-purple-600 font-bold\">${vitamins?.toFixed(2) ?? 0} mg</span> Vitamins •
-                    ${fiberHtml}${otherNutrientsHtml}
+            <div class=\"w-full md:w-auto mb-4 md:mb-0\">
+                <p class=\"font-bold text-xl text-amber-800 capitalize mb-2\">
+                    <i class=\"fas fa-apple-alt mr-2 text-amber-600\"></i>${foodName} (${weight}g)
                 </p>
+                <p class=\"text-sm text-amber-700\">
+                    <span class=\"inline-flex items-center bg-orange-100 px-2 py-1 rounded-full mr-2 mb-1\">
+                        <i class=\"fas fa-fire text-orange-500 mr-1\"></i>
+                        <span class=\"font-bold text-orange-700\">${calories?.toFixed(2) ?? 0} kcal</span>
+                    </span>
+                    <span class=\"inline-flex items-center bg-green-100 px-2 py-1 rounded-full mr-2 mb-1\">
+                        <i class=\"fas fa-dumbbell text-green-500 mr-1\"></i>
+                        <span class=\"font-bold text-green-700\">${protein?.toFixed(2) ?? 0} g Protein</span>
+                    </span>
+                    <span class=\"inline-flex items-center bg-red-100 px-2 py-1 rounded-full mr-2 mb-1\">
+                        <i class=\"fas fa-oil-can text-red-500 mr-1\"></i>
+                        <span class=\"font-bold text-red-700\">${fat?.toFixed(2) ?? 0} g Fat</span>
+                    </span>
+                    <span class=\"inline-flex items-center bg-purple-100 px-2 py-1 rounded-full mr-2 mb-1\">
+                        <i class=\"fas fa-pills text-purple-500 mr-1\"></i>
+                        <span class=\"font-bold text-purple-700\">${vitamins?.toFixed(2) ?? 0} mg Vitamins</span>
+                    </span>
+                    ${fiberHtml ? `<span class=\"inline-flex items-center bg-yellow-100 px-2 py-1 rounded-full mr-2 mb-1\">
+                        <i class=\"fas fa-leaf text-yellow-500 mr-1\"></i>
+                        <span class=\"font-bold text-yellow-700\">${fiberHtml.replace('</span> Fiber • ', ' Fiber')}</span>
+                    </span>` : ''}
+                </p>
+                ${otherNutrientsHtml ? `<p class=\"text-xs text-amber-600 mt-2\">${otherNutrientsHtml}</p>` : ''}
             </div>
-            <button class=\"remove-food-btn bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-0 md:ml-4 mt-4 md:mt-0\">Remove</button>
+            <button class=\"remove-food-btn bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 px-6 rounded-2xl warm-shadow hover-lift transition-all duration-300 ml-0 md:ml-4 mt-4 md:mt-0\">
+                <i class=\"fas fa-trash-alt mr-2\"></i>Remove
+            </button>
         `;
         // Remove button
         const removeBtn = listItem.querySelector('.remove-food-btn');
         removeBtn.addEventListener('click', function() {
-            // Remove from foodRecords
-            const removed = foodRecords.splice(index, 1)[0];
-            totalCalories -= removed.calories || 0;
-            totalProtein -= removed.protein || 0;
-            totalFat -= removed.fat || 0;
-            totalVitamins -= removed.vitamins || 0;
-            updateTotals();
-            saveToLocal();
-            renderFoodList();
+            // Add remove animation
+            listItem.classList.add('animate__animated', 'animate__fadeOutRight');
+            setTimeout(() => {
+                // Remove from foodRecords
+                const removed = foodRecords.splice(index, 1)[0];
+                totalCalories -= removed.calories || 0;
+                totalProtein -= removed.protein || 0;
+                totalFat -= removed.fat || 0;
+                totalVitamins -= removed.vitamins || 0;
+                updateTotals();
+                saveToLocal();
+                renderFoodList();
+            }, 500);
         });
         return listItem;
     }
@@ -757,9 +928,9 @@
         if (!saveMealBtn) {
             saveMealBtn = document.createElement('button');
             saveMealBtn.id = 'saveMealBtn';
-            saveMealBtn.className = 'w-full bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 mt-4';
-            saveMealBtn.textContent = 'Save Meal';
-            document.querySelector('.space-y-6').appendChild(saveMealBtn);
+            saveMealBtn.className = 'w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-4 px-6 rounded-3xl warm-shadow hover-lift transition-all duration-300 transform mt-6';
+            saveMealBtn.innerHTML = '<i class="fas fa-bookmark mr-2"></i>Save Meal';
+            document.querySelector('.space-y-8').appendChild(saveMealBtn);
         }
         saveMealBtn.addEventListener('click', () => {
             if (foodRecords.length === 0) {
