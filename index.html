@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI-Powered Macro Calculator</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Find and track macros for any food using AI-powered calculations">
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Macro Calc">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Favicon Meta Tags -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +42,7 @@
         }
         .input-group input[type="number"] {
             -moz-appearance: textfield;
+            appearance: textfield;
         }
         .loader {
             border: 4px solid #f3f3f3;
@@ -41,8 +63,37 @@
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl mx-auto p-4 md:p-8 lg:p-12 my-8 flex flex-col gap-8">
         <!-- Header Section -->
         <header class="text-center">
+            <!-- Food Logo -->
+            <div class="flex justify-center mb-4">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Apple -->
+                        <path d="M24 8C21 8 19 10 19 13C19 16 21 18 24 18C27 18 29 16 29 13C29 10 27 8 24 8Z" fill="#FF6B6B"/>
+                        <!-- Apple leaf -->
+                        <path d="M25 6C26 5 28 4.5 29 5.5C28.5 6.5 27 7 25 6Z" fill="#4ECDC4"/>
+                        <!-- Plate -->
+                        <circle cx="24" cy="30" r="12" fill="#FFFFFF" stroke="#F3F4F6" stroke-width="1"/>
+                        <!-- Fork -->
+                        <path d="M15 25L15 35M14 25L14 28M16 25L16 28" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+                        <!-- Knife -->
+                        <path d="M33 25L33 35M33 25L34 26" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+                        <!-- Food items -->
+                        <circle cx="22" cy="29" r="2" fill="#10B981"/>
+                        <circle cx="26" cy="29" r="1.5" fill="#F59E0B"/>
+                        <rect x="21" y="32" width="6" height="2" rx="1" fill="#EF4444"/>
+                    </svg>
+                </div>
+            </div>
+            
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight mb-2">AI-Powered Macro Calculator</h1>
             <p class="text-lg text-gray-500">Find and track macros for any food using Groq Llama 3.1.</p>
+            
+            <!-- PWA Install Button -->
+            <div id="installPrompt" class="mt-4 hidden">
+                <button id="installBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-green-700 transition-colors duration-200 mr-2">
+                    📱 Install App
+                </button>
+            </div>
             
             <!-- API Key Settings -->
             <div class="mt-4 flex justify-center space-x-2">
@@ -143,6 +194,47 @@
     </div>
 
     <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installPrompt = document.getElementById('installPrompt');
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Save the event so it can be triggered later
+            deferredPrompt = e;
+            // Show the install button
+            installPrompt.classList.remove('hidden');
+        });
+
+        installBtn?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // Clear the deferredPrompt
+                deferredPrompt = null;
+                // Hide the install button
+                installPrompt.classList.add('hidden');
+            }
+        });
+
         // Get references to all necessary DOM elements
         const addFoodBtn = document.getElementById('addFoodBtn');
         const foodList = document.getElementById('foodList');
