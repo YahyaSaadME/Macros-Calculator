@@ -27,13 +27,21 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .input-group input[type="number"]::-webkit-outer-spin-button,
         .input-group input[type="number"]::-webkit-inner-spin-button {
@@ -56,13 +64,24 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .food-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .food-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen w-full">
+<body class="min-h-screen">
 
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl mx-auto p-4 md:p-8 lg:p-12 my-8 flex flex-col gap-8">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Header Section -->
-        <header class="text-center">
+        <header class="text-center mb-8">
+            <div class="glass-card rounded-3xl p-6 mb-6">
             <!-- Food Logo -->
             <div class="flex justify-center mb-4">
                 <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
@@ -85,75 +104,88 @@
                 </div>
             </div>
             
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight mb-2">AI-Powered Macro Calculator</h1>
-            <p class="text-lg text-gray-500">Find and track macros for any food using Groq Llama 3.1.</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">AI-Powered Macro Calculator</h1>
+            <p class="text-lg text-white opacity-90">Find and track macros for any food using Groq Llama 3.1.</p>
             
             <!-- PWA Install Button -->
             <div id="installPrompt" class="mt-4 hidden">
-                <button id="installBtn" class="bg-green-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-green-700 transition-colors duration-200 mr-2">
-                    📱 Install App
+                <button id="installBtn" class="bg-white bg-opacity-20 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-opacity-30 transition-all duration-200 mr-2 flex items-center gap-2">
+                    <i data-lucide="smartphone" class="w-5 h-5"></i>
+                    Install App
                 </button>
             </div>
             
-            <!-- API Key Settings -->
-            <div class="mt-4 flex justify-center space-x-2">
-                <button id="settingsBtn" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-gray-700 transition-colors duration-200">
-                    ⚙️ API Settings
+            <!-- Navigation and API Key Settings -->
+            <div class="mt-4 flex justify-center space-x-2 flex-wrap gap-2">
+                <button id="savedMealsBtn" class="bg-white bg-opacity-20 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-opacity-30 transition-all duration-200 flex items-center gap-2">
+                    <i data-lucide="bookmark" class="w-5 h-5"></i>
+                    Saved Meals
                 </button>
+                <button id="settingsBtn" class="bg-white bg-opacity-20 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-opacity-30 transition-all duration-200 flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    API Settings
+                </button>
+            </div>
             </div>
         </header>
 
         <!-- Input and Add Section -->
-    <div class="bg-gray-50 p-6 rounded-2xl shadow-inner space-y-6 max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold text-gray-700">Add a Food Item</h2>
+        <div class="glass-card p-6 rounded-2xl shadow-lg space-y-6 mb-8">
+            <h2 class="text-2xl font-bold text-white">Add a Food Item</h2>
             <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
                 <div class="input-group">
-                    <label for="foodName" class="block text-sm font-medium text-gray-600 mb-1">Food Name</label>
-                    <input type="text" id="foodName" placeholder="e.g., Avocado, Quinoa, Steak" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                    <label for="foodName" class="block text-sm font-medium text-white opacity-90 mb-1">Food Name</label>
+                    <input type="text" id="foodName" placeholder="e.g., Avocado, Quinoa, Steak" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white bg-opacity-90">
                 </div>
                 <div class="input-group">
-                    <label for="weight" class="block text-sm font-medium text-gray-600 mb-1">Weight (g)</label>
-                    <input type="number" id="weight" placeholder="100" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                    <label for="weight" class="block text-sm font-medium text-white opacity-90 mb-1">Weight (g)</label>
+                    <input type="number" id="weight" placeholder="100" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white bg-opacity-90">
                 </div>
             </div>
-            <button id="addFoodBtn" class="w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+            <button id="addFoodBtn" class="w-full bg-purple-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
+                <i data-lucide="plus" class="w-5 h-5"></i>
                 <span id="buttonText">Add Food</span>
                 <div id="buttonLoader" class="loader hidden"></div>
             </button>
         </div>
 
         <!-- Totals and Food List Section -->
-    <div class="space-y-6 max-w-2xl mx-auto">
+        <div class="space-y-6">
             <!-- Total Macros Display -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div class="bg-blue-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Calories</p>
-                    <p id="totalCalories" class="text-2xl font-bold text-blue-800">0</p>
+                <div class="glass-card p-4 rounded-xl shadow-lg">
+                    <p class="text-sm text-white opacity-80">Total Calories</p>
+                    <p id="totalCalories" class="text-2xl font-bold text-white">0</p>
                 </div>
-                <div class="bg-green-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Protein</p>
-                    <p id="totalProtein" class="text-2xl font-bold text-green-800">0 g</p>
+                <div class="glass-card p-4 rounded-xl shadow-lg">
+                    <p class="text-sm text-white opacity-80">Total Protein</p>
+                    <p id="totalProtein" class="text-2xl font-bold text-white">0 g</p>
                 </div>
-                <div class="bg-red-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Fat</p>
-                    <p id="totalFat" class="text-2xl font-bold text-red-800">0 g</p>
+                <div class="glass-card p-4 rounded-xl shadow-lg">
+                    <p class="text-sm text-white opacity-80">Total Fat</p>
+                    <p id="totalFat" class="text-2xl font-bold text-white">0 g</p>
                 </div>
-                <div class="bg-purple-100 p-4 rounded-xl shadow-md">
-                    <p class="text-sm text-gray-500">Total Vitamins</p>
-                    <p id="totalVitamins" class="text-2xl font-bold text-purple-800">0 mg</p>
+                <div class="glass-card p-4 rounded-xl shadow-lg">
+                    <p class="text-sm text-white opacity-80">Total Vitamins</p>
+                    <p id="totalVitamins" class="text-2xl font-bold text-white">0 mg</p>
                 </div>
             </div>
 
             <!-- Food Items List -->
-            <div class="bg-gray-50 p-6 rounded-2xl shadow-inner">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-2xl font-bold text-gray-700">Added Food Items</h2>
-                                    <button id="removeAllFoodsBtn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-4">Remove All</button>
-                                </div>
+            <div class="glass-card p-6 rounded-2xl shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-white">Added Food Items</h2>
+                    <button id="removeAllFoodsBtn" class="bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-4 flex items-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        Remove All
+                    </button>
+                </div>
                 <ul id="foodList" class="space-y-4 max-h-64 overflow-y-auto pr-2">
                     <!-- Food items will be added here dynamically -->
                 </ul>
             </div>
+        </div>
+
         </div>
 
         <!-- Custom Modal for Alerts -->
@@ -340,7 +372,7 @@
     function renderFoodItem(foodObj, index) {
         const { foodName, weight, calories, protein, fat, vitamins, fiber, ...otherNutrients } = foodObj;
         const listItem = document.createElement('li');
-        listItem.className = 'bg-white border-2 border-indigo-200 p-4 rounded-2xl shadow flex flex-col md:flex-row justify-between items-center transition-all duration-300 mb-2';
+        listItem.className = 'food-item p-4 rounded-2xl shadow flex flex-col md:flex-row justify-between items-center transition-all duration-300 mb-2';
         // Remove sodium, potassium, calcium, iron from display, add fiber if present
         let otherNutrientsHtml = '';
         // Remove unwanted nutrients from otherNutrients (case-insensitive)
@@ -367,7 +399,10 @@
                     ${fiberHtml}${otherNutrientsHtml}
                 </p>
             </div>
-            <button class=\"remove-food-btn bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-0 md:ml-4 mt-4 md:mt-0\">Remove</button>
+            <button class=\"remove-food-btn bg-red-500 text-white font-bold py-2 px-4 rounded-xl shadow hover:bg-red-600 transition-colors duration-200 ml-0 md:ml-4 mt-4 md:mt-0 flex items-center gap-2\">
+                <i data-lucide=\"trash-2\" class=\"w-4 h-4\"></i>
+                Remove
+            </button>
         `;
         // Remove button
         const removeBtn = listItem.querySelector('.remove-food-btn');
@@ -382,6 +417,14 @@
             saveToLocal();
             renderFoodList();
         });
+        
+        // Initialize Lucide icons for new elements
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 0);
+        
         return listItem;
     }
 
@@ -408,190 +451,6 @@
                 }
             };
         }
-    }
-
-    // Render saved meals
-    function renderSavedMeals() {
-        let mealSection = document.getElementById('savedMealsSection');
-        if (!mealSection) {
-            mealSection = document.createElement('div');
-            mealSection.id = 'savedMealsSection';
-            mealSection.className = 'mt-8 max-w-4xl mx-auto';
-            document.body.appendChild(mealSection);
-        }
-        mealSection.innerHTML = '<h2 class="text-2xl font-bold text-gray-700 mb-4">Saved Meals</h2>';
-        if (savedMeals.length === 0) {
-            mealSection.innerHTML += '<p class="text-gray-500">No meals saved yet.</p>';
-            return;
-        }
-        savedMeals.forEach((meal, i) => {
-            const mealBox = document.createElement('div');
-            mealBox.className = 'bg-white border-2 border-green-200 p-4 rounded-2xl shadow mb-8';
-            mealBox.innerHTML = `<div class='flex justify-between items-center mb-2'>
-                <span class='font-bold text-lg text-green-700'>Meal #${i+1}</span>
-                <div class='flex gap-2'>
-                    <button class='add-food-to-meal-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700' data-idx='${i}'>Add Food</button>
-                    <button class='delete-meal-btn bg-red-400 text-white px-3 py-1 rounded hover:bg-red-600' data-idx='${i}'>Delete</button>
-                </div>
-            </div>`;
-            meal.foods.forEach((food, foodIdx) => {
-                mealBox.innerHTML += `<div class='ml-2 mb-1 flex items-center gap-2'>
-                    <span class='font-semibold text-gray-800'>${food.foodName} (${food.weight}g)</span>
-                    <button class='remove-food-from-meal-btn bg-red-200 text-red-700 px-2 py-0.5 rounded text-xs' data-meal='${i}' data-food='${foodIdx}'>Remove</button>
-                </div>`;
-            });
-            mealBox.innerHTML += `<button class='show-macros-btn mt-2 bg-indigo-500 text-white px-4 py-1 rounded hover:bg-indigo-700' data-idx='${i}'>Show Macros</button>`;
-            mealSection.appendChild(mealBox);
-        });
-        // Add event listeners for new buttons
-        mealSection.querySelectorAll('.delete-meal-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const idx = parseInt(this.getAttribute('data-idx'));
-                savedMeals.splice(idx, 1);
-                saveToLocal();
-                renderSavedMeals();
-            });
-        });
-        mealSection.querySelectorAll('.add-food-to-meal-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const idx = parseInt(this.getAttribute('data-idx'));
-                showAddFoodToMealModal(idx);
-            });
-        });
-        mealSection.querySelectorAll('.remove-food-from-meal-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const mealIdx = parseInt(this.getAttribute('data-meal'));
-                const foodIdx = parseInt(this.getAttribute('data-food'));
-                savedMeals[mealIdx].foods.splice(foodIdx, 1);
-                saveToLocal();
-                renderSavedMeals();
-            });
-        });
-        mealSection.querySelectorAll('.show-macros-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const idx = parseInt(this.getAttribute('data-idx'));
-                showMealModal(savedMeals[idx], idx+1);
-            });
-        });
-    // Modal to add food to a meal
-    function showAddFoodToMealModal(mealIdx) {
-        let html = `<div class='space-y-4 text-left'>
-            <label class='block'>Food Name
-                <input id='modalFoodName' class='w-full px-3 py-2 border rounded mt-1' placeholder='e.g. Apple' />
-            </label>
-            <label class='block'>Weight (g)
-                <input id='modalFoodWeight' type='number' class='w-full px-3 py-2 border rounded mt-1' placeholder='100' />
-            </label>
-            <button id='modalAddFoodBtn' class='w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700'>Add Food</button>
-        </div>`;
-        showModal('Add Food to Meal', html);
-        setTimeout(() => {
-            document.getElementById('modalAddFoodBtn').onclick = async function() {
-                const foodName = document.getElementById('modalFoodName').value.trim();
-                const weight = parseFloat(document.getElementById('modalFoodWeight').value);
-                if (!foodName || isNaN(weight) || weight <= 0) {
-                    showModal('Invalid Input', 'Please enter a valid food name and weight.');
-                    return;
-                }
-                // Fetch nutrition info using Groq API
-                const userPrompt = `What are the calories (kcal), protein (g), fat (g), vitamins (mg), and all other nutrients (like carbs, fiber, sugar) for ${weight}g of ${foodName}? Provide the data in a simple JSON object with all available nutrients as keys. Do not include any explanation or markdown.`;
-                const systemPrompt = `Your sole purpose is to provide nutritional information for a food item in a JSON object. The keys must include at least 'foodName', 'calories', 'protein', 'fat', and 'vitamins', and any other nutrients if available (e.g., carbs, fiber, sugar, sodium). The values for all nutrients must be numbers except 'foodName'. Do not include any other text, explanation, or markdown. If you cannot find the data, set all nutritional values to 0.`;
-                const payload = {
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        { role: "user", content: userPrompt }
-                    ],
-                model: "llama-3.1-8b-instant",
-                    temperature: 1,
-                max_completion_tokens: 1024,
-                    top_p: 1,
-                    stream: false
-                };
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${getapi()}`
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error('API error');
-                    const result = await response.json();
-                    let content = result.choices?.[0]?.message?.content;
-                    if (content) {
-                        if (content.startsWith('```')) {
-                            content = content.replace(/^```[a-zA-Z]*\n?|```$/g, '').trim();
-                        }
-                        const parsedData = JSON.parse(content);
-                        parsedData.weight = weight;
-                        savedMeals[mealIdx].foods.push(parsedData);
-                        saveToLocal();
-                        renderSavedMeals();
-                        alertModal.classList.add('hidden');
-                    } else {
-                        showModal('API Error', 'No content returned from API.');
-                    }
-                } catch (err) {
-                    showModal('API Error', 'Failed to fetch data. Please try again later.');
-                }
-            };
-        }, 100);
-    }
-    // Show modal with all meal details
-    function showMealModal(meal, mealNumber) {
-        // Collect all unique macro keys, excluding sodium, potassium, calcium, iron
-        const macroSet = new Set();
-        meal.foods.forEach(food => {
-            Object.keys(food).forEach(key => {
-                if (!['foodName','weight','sodium','potassium','calcium','iron'].includes(key.toLowerCase())) macroSet.add(key);
-            });
-        });
-        const macros = Array.from(macroSet);
-        // Table header: food names
-                        let html = `
-                        <div class='fixed inset-0 flex items-center justify-center z-50'>
-                            <div style="width:95vw;max-width:1100px;max-height:85vh;overflow:auto;background:rgba(245,247,255,0.98);box-shadow:0 4px 32px #0003;border-radius:2rem;padding:2.5rem 1.5rem;display:flex;flex-direction:column;align-items:center;">
-                                <div class='w-full overflow-x-auto'>
-                                    <table class='w-full border border-gray-200 rounded-2xl text-base bg-white shadow-lg'>
-                                        <thead>
-                                            <tr>
-                                                <th class='p-4 border-b-2 border-gray-300 bg-indigo-100 text-lg font-bold text-left sticky top-0 z-10 rounded-tl-2xl'>Macro</th>`;
-                        meal.foods.forEach((food, idx) => {
-                                html += `<th class='p-4 border-b-2 border-gray-300 bg-indigo-100 text-lg font-bold text-center sticky top-0 z-10'>${food.foodName} <br><span class='text-xs text-gray-500'>(${food.weight}g)</span></th>`;
-                        });
-                        html += `</tr></thead><tbody>`;
-                        macros.forEach((macro, rowIdx) => {
-                                html += `<tr class='${rowIdx % 2 === 0 ? 'bg-white' : 'bg-indigo-50'}'>
-                                        <td class='p-3 border-b border-gray-100 font-semibold capitalize'>${macro}</td>`;
-                                meal.foods.forEach(food => {
-                                        let val = food[macro];
-                                        html += `<td class='p-3 border-b border-gray-100 text-center text-indigo-700'>${val !== undefined ? val : '-'}</td>`;
-                                });
-                                html += `</tr>`;
-                        });
-                        html += `</tbody></table>
-                                </div>
-                                <div class='flex justify-center mt-6 w-full'>
-                                    <button onclick='document.getElementById("closeModalBtn").click()' class='bg-indigo-600 text-white font-bold py-3 px-10 rounded-2xl shadow-lg hover:bg-indigo-700 text-lg transition-all duration-200'>OK</button>
-                                </div>
-                            </div>
-                        </div>`;
-                        showModal(`Meal #${mealNumber} Macros Table`, html);
-    }
-        // Add delete listeners
-        mealSection.querySelectorAll('.delete-meal-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const idx = parseInt(this.getAttribute('data-idx'));
-                savedMeals.splice(idx, 1);
-                saveToLocal();
-                renderSavedMeals();
-            });
-        });
     }
 
     const addFoodItem = async () => {
@@ -757,8 +616,8 @@
         if (!saveMealBtn) {
             saveMealBtn = document.createElement('button');
             saveMealBtn.id = 'saveMealBtn';
-            saveMealBtn.className = 'w-full bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 mt-4';
-            saveMealBtn.textContent = 'Save Meal';
+            saveMealBtn.className = 'w-full bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 mt-4 flex items-center justify-center gap-2';
+            saveMealBtn.innerHTML = '<i data-lucide="save" class="w-5 h-5"></i>Save Meal';
             document.querySelector('.space-y-6').appendChild(saveMealBtn);
         }
         saveMealBtn.addEventListener('click', () => {
@@ -772,15 +631,24 @@
                 timestamp: Date.now()
             });
             saveToLocal();
-            renderSavedMeals();
-            showModal('Meal Saved', 'Your meal has been saved!');
+            showModal('Meal Saved', 'Your meal has been saved! <br><a href="saved-meals.html" class="text-blue-600 underline">View Saved Meals</a>');
+        });
+
+        // Add event listener for saved meals navigation
+        const savedMealsBtn = document.getElementById('savedMealsBtn');
+        savedMealsBtn.addEventListener('click', () => {
+            window.location.href = 'saved-meals.html';
         });
 
         // On load, restore from localStorage
         loadFromLocal();
         renderFoodList();
-        renderSavedMeals();
         updateTotals();
+        
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     </script>
 </body>
 </html>
